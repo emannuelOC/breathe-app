@@ -74,15 +74,22 @@ public class FrameExtractor: NSObject, AVCaptureVideoDataOutputSampleBufferDeleg
         if device.hasTorch {
             do {
                 try device.lockForConfiguration()
-                if (device.torchMode == AVCaptureDevice.TorchMode.on) {
-                    device.torchMode = AVCaptureDevice.TorchMode.off
-                } else {
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    do {
+                        try device.setTorchModeOn(level: 0.0)
+                    } catch {
+                        print(error)
+                    }
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                     do {
                         try device.setTorchModeOn(level: 1.0)
                     } catch {
                         print(error)
                     }
                 }
+
                 device.unlockForConfiguration()
             } catch {
                 print(error)
